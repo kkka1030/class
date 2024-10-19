@@ -1,0 +1,16 @@
+# 设置 CMake 的最低版本要求
+cmake_minimum_required(VERSION 3.10)
+
+# 定义项目名称和使用的语言
+project(MyProgram)
+
+# 设置 C++ 标准
+set(CMAKE_CXX_STANDARD 11)
+
+# 查找当前项目中的所有源文件
+set(SOURCES src/Chicken.cpp)
+
+# 添加可执行文件
+add_executable(my_program ${SOURCES})
+
+

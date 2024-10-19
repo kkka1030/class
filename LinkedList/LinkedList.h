@@ -104,6 +104,7 @@ void SingleLinkedList<T>::remove()
     }
     p->next = currentPos->next;
     delete currentPos;
+    currentPos = p->next;
     --size;
 }
 
