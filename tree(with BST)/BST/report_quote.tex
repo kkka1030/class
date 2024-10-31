@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage[UTF8]{ctex}
+\geometry{a4paper, margin=1in}
+
+\title{C++ 引用类型的解释}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{引言}
+在C++中，引用类型允许我们通过别名来访问变量、对象或指针。在处理复杂数据结构（如二叉树）时，引用类型的正确使用可以有效减少不必要的数据复制，提高代码的运行效率。本报告旨在分析在特定代码片段中引用类型的使用情况，并解释为什么某些成员不能作为引用传递。
+
+\section{引用类型的基本规则}
+在C++中，要将一个变量或对象作为引用传递，需要满足以下条件：
+
+\begin{itemize}
+    \item 该变量或对象必须有一个名称，而不是一个表达式。
+    \item 它的生命周期必须超出引用的作用范围，否则会产生悬垂引用（dangling reference）。
+\end{itemize}
+
+当满足以上条件时，引用传递可以避免复制操作，实现高效的参数传递。
+
+\section{代码示例}
+以下代码为一个二叉搜索树的删除函数，实现了递归删除节点的操作：
+
+\begin{lstlisting}[language=C++]
+void remove(const Comparable & x, BinaryNode * & t) {
+    if (t == nullptr)
+        return;
+
+    if (x < t->element)
+        remove(x, t->left);
+    else if (t->element < x)
+        remove(x, t->right);
+    else if (t->left != nullptr && t->right != nullptr) { // Two children
+        t->element = findMin(t->right)->element;
+        remove(t->element, t->right);
+    }
+    else {
+        BinaryNode *oldNode = t;
+        t = (t->left != nullptr) ? t->left : t->right;
+        delete oldNode;
+    }
+}
+\end{lstlisting}
+
+在这段代码中，`t->element` 和 `t->right` 的传递方式各不相同。接下来，我们将详细分析这两者的区别。
+
+\section{\texttt{t->element} 与引用类型}
+在调用 \texttt{remove(t->element, t->right);} 时，\texttt{t->element} 是一个值类型的成员变量。尽管 \texttt{remove} 函数的参数 \texttt{const Comparable \& x} 是引用类型，\texttt{t->element} 在传递时会发生值的复制。这是因为：
+
+\begin{itemize}
+    \item \texttt{t->element} 是一个具体的值（假设类型为 \texttt{Comparable}，如 \texttt{int} 或 \texttt{std::string}）。
+    \item 即使 \texttt{x} 是引用参数，但传入的是 \texttt{t->element} 的值，因此会复制该值，然后将其传递给 \texttt{x} 的引用。
+\end{itemize}
+
+这种复制在递归调用中可能会多次发生，尤其是在 \texttt{Comparable} 类型较大时，复制操作可能导致效率降低。
+
+\section{\texttt{t->right} 与指针的引用}
+在 \texttt{remove} 函数中，第二个参数 \texttt{BinaryNode * \& t} 是一个指针的引用。传入 \texttt{t->right} 符合该参数类型要求，因为：
+
+\begin{itemize}
+    \item \texttt{t->right} 是一个指向 \texttt{BinaryNode} 的指针。
+    \item 通过引用传递指针（即 \texttt{BinaryNode * \&}），我们可以在函数内部修改 \texttt{t->right} 的指向，这使得递归过程中可以直接改变节点链接。
+\end{itemize}
+
+\section{总结}
+在C++中，可以作为引用传递的类型包括：
+\begin{itemize}
+    \item 普通变量和对象（如 \texttt{int}、\texttt{std::string}）。
+    \item 指针（如 \texttt{BinaryNode *} 可以通过 \texttt{BinaryNode * \&} 传递）。
+    \item 引用本身（如 \texttt{Comparable \&} 可以传递 \texttt{Comparable} 类型的引用）。
+\end{itemize}
+
+而不能作为引用传递的类型包括：
+\begin{itemize}
+    \item 类的成员变量的值（如 \texttt{t->element}），因为它是具体的值，而不是一个引用。
+    \item 表达式或临时值（如 \texttt{a + b} 的结果）。
+\end{itemize}
+
+在此代码中，\texttt{t->right} 是指针类型，因此可以通过引用传递和修改指向；而 \texttt{t->element} 是值类型的成员，不能直接作为引用传递。这一设计避免了不必要的值复制，有助于提升递归操作的效率。
+
+\end{document}

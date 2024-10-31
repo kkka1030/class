@@ -1,0 +1,71 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath} % 数学符号包
+\usepackage{graphicx} % 插入图片包
+
+\title{二叉树基础报告}
+\author{作者姓名}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+
+\section{简介}
+
+二叉树（Binary Tree）是一种常见的数据结构，其中每个节点最多有两个子节点，分别称为“左子节点”和“右子节点”。二叉树的结构非常适合用于表示层级关系，比如树状组织结构或文件系统中的目录关系。
+
+\section{二叉树的基本概念}
+
+\subsection{节点}
+每个二叉树的节点由三个部分组成：
+\begin{itemize}
+    \item 数据域：存储节点的值；
+    \item 左指针：指向左子节点；
+    \item 右指针：指向右子节点。
+\end{itemize}
+
+\subsection{二叉树的术语}
+\begin{itemize}
+    \item \textbf{根节点（Root Node）}：二叉树的最顶层节点，没有父节点。
+    \item \textbf{叶子节点（Leaf Node）}：没有任何子节点的节点。
+    \item \textbf{父节点（Parent Node）}：某个节点的上一级节点。
+    \item \textbf{子节点（Child Node）}：某个节点的下一级节点。
+\end{itemize}
+
+\section{二叉树的类型}
+
+二叉树有多种类型，主要包括：
+\begin{itemize}
+    \item \textbf{满二叉树}：每个节点都有两个子节点，且所有叶子节点在同一层。
+    \item \textbf{完全二叉树}：除最后一层外，其他每一层的节点都达到最大值，最后一层的节点尽可能靠左。
+    \item \textbf{平衡二叉树}：左右子树的高度差不超过1。
+    \item \textbf{二叉搜索树（BST）}：左子树的节点值小于根节点，右子树的节点值大于根节点。
+\end{itemize}
+
+\section{二叉树的遍历方法}
+
+二叉树的遍历是指按某种次序访问树中的每个节点，常见的遍历方法有：
+\begin{itemize}
+    \item \textbf{前序遍历}：先访问根节点，再访问左子树，最后访问右子树。
+    \item \textbf{中序遍历}：先访问左子树，再访问根节点，最后访问右子树。在二叉搜索树中，中序遍历的结果是有序的。
+    \item \textbf{后序遍历}：先访问左子树，再访问右子树，最后访问根节点。
+    \item \textbf{层序遍历}：按照从上到下、从左到右的顺序逐层遍历。
+\end{itemize}
+
+\section{二叉树的应用}
+
+二叉树在计算机科学中有广泛的应用，常见的应用场景包括：
+\begin{itemize}
+    \item \textbf{数据检索}：二叉搜索树能有效地进行数据查找、插入和删除操作，时间复杂度为O(log n)。
+    \item \textbf{表达式解析}：表达式树是二叉树的一种，可以用来表示算术表达式。
+    \item \textbf{文件系统}：操作系统中的目录结构可以用二叉树来表示，以提高文件的查找效率。
+\end{itemize}
+
+\section{结论}
+
+二叉树是一种重要的数据结构，它具有简单的结构和强大的功能。通过不同的遍历方式，我们可以在树中高效地查找、插入、删除数据。二叉树的灵活性使得它在各类计算机应用中得到了广泛的使用。
+
+\end{document}
