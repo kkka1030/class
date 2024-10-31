@@ -21,7 +21,7 @@ run: $(TARGET)
 
 # 编译 LaTeX 报告
 report: $(REPORT)
-	pdflatex -interaction=nonstopmode -output-directory=. $(REPORT)
+	xelatex -interaction=nonstopmode -output-directory=. $(REPORT)
 
 # 清理所有生成的文件
 clean:
