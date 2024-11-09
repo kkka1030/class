@@ -387,7 +387,7 @@ class BinarySearchTree
     }
 
     balance(t);
-}
+    }
 
     
     /**
