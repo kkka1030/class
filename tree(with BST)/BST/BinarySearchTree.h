@@ -1,6 +1,6 @@
 #ifndef BINARY_SEARCH_TREE_H
 #define BINARY_SEARCH_TREE_H
-
+#include <memory>
 #include "dsexceptions.h"
 #include <algorithm>
 using namespace std;       
@@ -81,7 +81,7 @@ class BinarySearchTree
     {
         if( isEmpty( ) )
             throw UnderflowException{ };
-        return findMin( root )->element;
+        return *findMin( root )->element;
     }
 
     /**
@@ -92,7 +92,7 @@ class BinarySearchTree
     {
         if( isEmpty( ) )
             throw UnderflowException{ };
-        return findMax( root )->element;
+        return *findMax( root )->element;
     }
 
     /**
@@ -159,17 +159,17 @@ class BinarySearchTree
   protected:
     struct BinaryNode
     {
-        Comparable element;
+        std::unique_ptr<Comparable> element;
         BinaryNode *left;
         BinaryNode *right;
         int height;
         BinaryNode( const Comparable & theElement, BinaryNode *lt, BinaryNode *rt )
-          : element{ theElement }, left{ lt }, right{ rt }, height{ 0 } {
+          : element{std::make_unique<Comparable>(theElement)}, left{ lt }, right{ rt }, height{ 0 } {
             updateHeight();
             }
         
         BinaryNode( Comparable && theElement, BinaryNode *lt, BinaryNode *rt )
-          : element{ std::move( theElement ) }, left{ lt }, right{ rt }, height{ 0 } 
+          : element{std::make_unique<Comparable>(std::move(theElement))}, left{ lt }, right{ rt }, height{ 0 } 
         {
         updateHeight();
         }
@@ -195,9 +195,9 @@ class BinarySearchTree
     {
         if( t == nullptr )
             t = new BinaryNode{ x, nullptr, nullptr };
-        else if( x < t->element )
+        else if( x < *t->element )
             insert( x, t->left );
-        else if( t->element < x )
+        else if( *t->element < x )
             insert( x, t->right );
         else
             ;  // Duplicate; do nothing
@@ -215,16 +215,19 @@ class BinarySearchTree
     {
         if( t == nullptr )
             t = new BinaryNode{ std::move( x ), nullptr, nullptr };
-        else if( x < t->element )
+        else if( x < *t->element )
             insert( std::move( x ), t->left );
-        else if( t->element < x )
+        else if( *t->element < x )
             insert( std::move( x ), t->right );
         else
             ;  // Duplicate; do nothing
         t->updateHeight();
         balance(t);
     }
-
+    
+    int height(BinaryNode *t) const {
+    return t == nullptr ? -1 : t->height;
+    }
     /**
      * Internal method to remove from a subtree.
      * x is the item to remove.
@@ -267,7 +270,7 @@ class BinarySearchTree
     // 右单旋转
     void rotateWithRightChild(BinaryNode *&k2) 
     {
-        BinaryNode *k1 = k2->right;
+        BinaryNode* k1 = k2->right;
         k2->right = k1->left;
         k1->left = k2;
         k2->updateHeight();  
@@ -295,16 +298,16 @@ class BinarySearchTree
     if (t == nullptr)  
         return;
 
-    if ((t->left)->height - (t->right)->height > 1) 
+    if (height((t->left)) - height((t->right)) > 1) 
     {  // 左子树过重
-        if ((t->left->left)->height >= (t->left->right)->height)  
+        if (height((t->left->left)) >= height(t->left->right))  
             rotateWithLeftChild(t);
         else  
             doubleWithLeftChild(t);
     } 
-    else if ((t->right)->height - (t->left)->height > 1) 
+    else if (height(t->right) - height(t->left) > 1) 
     {  // 右子树过重
-        if ((t->right->right)->height >= (t->right->left)->height)  
+        if (height(t->right->right) >= height(t->right->left))  
             rotateWithRightChild(t);
         else  
             doubleWithRightChild(t);
@@ -357,11 +360,11 @@ class BinarySearchTree
         return; 
     }
 
-    if (x < t->element) 
+    if (x < *t->element) 
     {
         remove(x, t->left);
     } 
-    else if (t->element < x) 
+    else if (*t->element < x) 
     {
         remove(x, t->right);
     } 
@@ -369,7 +372,7 @@ class BinarySearchTree
     {
         BinaryNode *minNode = findMin(t->right);
         std::swap(t->element, minNode->element);  
-        remove(minNode->element, t->right);
+        remove(*minNode->element, t->right);
     } 
     else 
     {
@@ -422,9 +425,9 @@ class BinarySearchTree
     {
         if( t == nullptr )
             return false;
-        else if( x < t->element )
+        else if( x < *t->element )
             return contains( x, t->left );
-        else if( t->element < x )
+        else if( *t->element < x )
             return contains( x, t->right );
         else
             return true;    // Match
@@ -466,7 +469,7 @@ class BinarySearchTree
         if( t != nullptr )
         {
             printTree( t->left, out );
-            out << t->element << endl;
+            out << *t->element << endl;
             printTree( t->right, out );
         }
     }
@@ -479,7 +482,7 @@ class BinarySearchTree
         if( t == nullptr )
             return nullptr;
         else
-            return new BinaryNode{ t->element, clone( t->left ), clone( t->right ) };
+            return new BinaryNode{ *t->element, clone( t->left ), clone( t->right ) };
     }
 };
 
