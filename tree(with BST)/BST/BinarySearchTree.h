@@ -156,18 +156,30 @@ class BinarySearchTree
     }
 
 
-  private:
+  protected:
     struct BinaryNode
     {
         Comparable element;
         BinaryNode *left;
         BinaryNode *right;
-
+        int height;
         BinaryNode( const Comparable & theElement, BinaryNode *lt, BinaryNode *rt )
-          : element{ theElement }, left{ lt }, right{ rt } { }
+          : element{ theElement }, left{ lt }, right{ rt }, height{ 0 } {
+            updateHeight();
+            }
         
         BinaryNode( Comparable && theElement, BinaryNode *lt, BinaryNode *rt )
-          : element{ std::move( theElement ) }, left{ lt }, right{ rt } { }
+          : element{ std::move( theElement ) }, left{ lt }, right{ rt }, height{ 0 } 
+        {
+        updateHeight();
+        }
+        
+        void updateHeight() 
+        {
+        int leftHeight = (left != nullptr) ? left->height : -1;   
+        int rightHeight = (right != nullptr) ? right->height : -1; 
+        height = std::max(leftHeight, rightHeight) + 1;           
+        }
     };
 
     BinaryNode *root;
@@ -189,6 +201,8 @@ class BinarySearchTree
             insert( x, t->right );
         else
             ;  // Duplicate; do nothing
+        t->updateHeight();
+        balance(t);
     }
     
     /**
@@ -207,6 +221,8 @@ class BinarySearchTree
             insert( std::move( x ), t->right );
         else
             ;  // Duplicate; do nothing
+        t->updateHeight();
+        balance(t);
     }
 
     /**
@@ -237,6 +253,75 @@ class BinarySearchTree
         }
     }
     */
+    // 左单旋转
+    void rotateWithLeftChild(BinaryNode* &k2) 
+    {
+        BinaryNode* k1 = k2->left;
+        k2->left = k1->right;
+        k1->right = k2;
+        k2->updateHeight();  
+        k1->updateHeight();
+        k2 = k1;
+    }
+
+    // 右单旋转
+    void rotateWithRightChild(BinaryNode *&k2) 
+    {
+        BinaryNode *k1 = k2->right;
+        k2->right = k1->left;
+        k1->left = k2;
+        k2->updateHeight();  
+        k1->updateHeight();
+        k2 = k1;
+    }
+
+    // 左右双旋转
+    void doubleWithLeftChild(BinaryNode *&k3) 
+    {
+        rotateWithRightChild(k3->left);
+        rotateWithLeftChild(k3);
+    }
+
+    // 右左双旋转
+    void doubleWithRightChild(BinaryNode *&k3) 
+    {
+        rotateWithLeftChild(k3->right);
+        rotateWithRightChild(k3);
+    }
+    
+    //单个节点平衡
+    void balance(BinaryNode* &t) 
+    {
+    if (t == nullptr)  
+        return;
+
+    if ((t->left)->height - (t->right)->height > 1) 
+    {  // 左子树过重
+        if ((t->left->left)->height >= (t->left->right)->height)  
+            rotateWithLeftChild(t);
+        else  
+            doubleWithLeftChild(t);
+    } 
+    else if ((t->right)->height - (t->left)->height > 1) 
+    {  // 右子树过重
+        if ((t->right->right)->height >= (t->right->left)->height)  
+            rotateWithRightChild(t);
+        else  
+            doubleWithRightChild(t);
+    }
+    }
+    
+    //整个树进行平衡
+    void superbalance(BinaryNode* &t) 
+    {
+        if (t == nullptr) return;  
+        superbalance(t->left);
+        superbalance(t->right);
+        balance(t);
+    }
+    
+    
+    //找到这个树里最小的节点，删除它，并返回它
     BinaryNode* detachMin(BinaryNode*& t) 
     {
     if (t == nullptr)
@@ -266,63 +351,42 @@ class BinarySearchTree
     return current; 
     }
 
-    void remove( const Comparable & x, BinaryNode * & t )
+    void remove(const Comparable &x, BinaryNode *&t) {
+    if (t == nullptr) 
     {
-        BinaryNode* parent = nullptr;
-        BinaryNode* current = t;
-        while (current != nullptr && current->element != x) 
-        {
-            parent = current;
-            if (x < current->element) 
-            {
-                current = current->left;
-            } 
-            else 
-            {
-                current = current->right;
-            }
-        }
-        if( current == nullptr )
-        {    
-            return;   // Item not found; do nothing
-        }
-        if( current->left != nullptr && current->right != nullptr ) // Two children
-        {
-            BinaryNode* m = detachMin( current->right );
-            m->left = current->left;
-            m->right = current->right;
-            if (parent == nullptr)
-            {
-                t = m; 
-            } 
-            else if (parent->left == current) 
-            {
-                parent->left = m;
-            } 
-            else 
-            {
-                parent->right = m;
-            }
-        delete current;
-        }
-        else
-        {
-            if (parent == nullptr)
-            {
-                t = ( current->left != nullptr ) ? current->left : current->right;
-            } 
-            else if (parent->left == current)
-            {
-                parent->left = ( current->left != nullptr ) ? current->left : current->right;                
-            }
-            else 
-            {
-                parent->right = ( current->left != nullptr ) ? current->left : current->right;
-            }
-            
-            delete current;
-        }
+        return; 
     }
+
+    if (x < t->element) 
+    {
+        remove(x, t->left);
+    } 
+    else if (t->element < x) 
+    {
+        remove(x, t->right);
+    } 
+    else if (t->left != nullptr && t->right != nullptr) 
+    {
+        BinaryNode *minNode = findMin(t->right);
+        std::swap(t->element, minNode->element);  
+        remove(minNode->element, t->right);
+    } 
+    else 
+    {
+        BinaryNode *oldNode = t;
+        t = (t->left != nullptr) ? t->left : t->right;
+        delete oldNode;
+    }
+
+    
+    if (t != nullptr) {
+        t->updateHeight();
+    }
+
+    balance(t);
+}
+
+    
     /**
      * Internal method to find the smallest item in a subtree t.
      * Return node containing the smallest item.

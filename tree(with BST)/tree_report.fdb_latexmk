@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1730183549 "c:/Users/31019/Desktop/class/tree/tree_report.tex" "tree_report.pdf" "tree_report" 1730183551 0
-  "c:/Users/31019/Desktop/class/tree/tree_report.tex" 1729581619 3267 57086122cfbc03e1618bc546dae8fd33 ""
+["pdflatex"] 1731141367 "c:/Users/31019/Desktop/class/tree(with BST)/tree_report.tex" "tree_report.pdf" "tree_report" 1731141370 0
+  "c:/Users/31019/Desktop/class/tree(with BST)/tree_report.tex" 1729581619 3267 57086122cfbc03e1618bc546dae8fd33 ""
   "c:/Windows/Fonts/msyh.ttc" 1691889811 19701556 07c864a5b15e68fa47639738197fae38 ""
   "c:/Windows/Fonts/simhei.ttf" 1651842600 9753388 6abc0fcfbaa40600f9cecca3afeb3aa7 ""
   "c:/Windows/Fonts/simsun.ttc" 1691889811 18008680 490583a172d4371a68d1e0526a6bca81 ""
@@ -162,7 +162,7 @@
   "c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1709977779 4662804 27f73c2f767ae4579fe38abe9088e726 ""
   "c:/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1709983622 7883443 ea53d55e08146501f483e2e84703d53c ""
   "c:/texlive/2023/texmf.cnf" 1709977745 713 e69b156964470283e0530f5060668171 ""
-  "tree_report.aux" 1730183550 882 7a908798a0dde654f85e80bf9ca5da51 "pdflatex"
+  "tree_report.aux" 1731141370 882 7a908798a0dde654f85e80bf9ca5da51 "pdflatex"
   "tree_report.tex" 1729581619 3267 57086122cfbc03e1618bc546dae8fd33 ""
   (generated)
   "tree_report.aux"
