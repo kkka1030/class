@@ -1,0 +1,33 @@
+class HashTable {
+private:
+    vector<list<int>> table; // 每个槽位存储一个链表
+    int size;
+
+public:
+    HashTable(int size) : size(size) {
+        table.resize(size);
+    }
+
+    void insert(int key) {
+        int index = hashFunction(key);
+        table[index].push_front(key); // 插入到链表头部
+    }
+
+    bool search(int key) {
+        int index = hashFunction(key);
+        for (int val : table[index]) {
+            if (val == key) return true;
+        }
+        return false;
+    }
+
+    void remove(int key) {
+        int index = hashFunction(key);
+        table[index].remove(key); // 从链表中删除元素
+    }
+
+private:
+    int hashFunction(int key) {
+        return key % size; // 除法法计算哈希值
+    }
+};

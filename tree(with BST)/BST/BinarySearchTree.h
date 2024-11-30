@@ -327,66 +327,68 @@ class BinarySearchTree
     //找到这个树里最小的节点，删除它，并返回它
     BinaryNode* detachMin(BinaryNode*& t) 
     {
-    if (t == nullptr)
-    {
-        return nullptr;
-    }
-    BinaryNode* parent = nullptr;
-    BinaryNode* current = t;
+        if (t == nullptr)
+        {
+            return nullptr;
+        }
+        BinaryNode* parent = nullptr;
+        BinaryNode* current = t;
     
-    while (current->left != nullptr) 
-    {
-        parent = current;
-        current = current->left;
-    }
+        while (current->left != nullptr) 
+        {
+            parent = current;
+            current = current->left;
+        }
 
-    if (parent != nullptr) 
-    {
-        parent->left = current->right; 
-    }
-    else 
-    {
-        t = current->right; 
-    }
+        if (parent != nullptr) 
+        {
+            parent->left = current->right; 
+        }
+        else 
+        {
+            t = current->right; 
+        }
     
-    current->left = nullptr;
-    current->right = nullptr;
-    return current; 
+        current->left = nullptr;
+        current->right = nullptr;
+        return current; 
     }
 
-    void remove(const Comparable &x, BinaryNode *&t) {
-    if (t == nullptr) 
+    void remove(const Comparable &x, BinaryNode *&t) 
     {
-        return; 
-    }
+        if (t == nullptr) 
+        {
+            return; 
+        }
 
-    if (x < *t->element) 
-    {
-        remove(x, t->left);
-    } 
-    else if (*t->element < x) 
-    {
-        remove(x, t->right);
-    } 
-    else if (t->left != nullptr && t->right != nullptr) 
-    {
-        BinaryNode *minNode = findMin(t->right);
-        std::swap(t->element, minNode->element);  
-        remove(*minNode->element, t->right);
-    } 
-    else 
-    {
-        BinaryNode *oldNode = t;
-        t = (t->left != nullptr) ? t->left : t->right;
-        delete oldNode;
-    }
+        if (x < *t->element) 
+        {
+            remove(x, t->left);
+        } 
+        else if (*t->element < x) 
+        {
+            remove(x, t->right);
+        } 
+        else if (t->left != nullptr && t->right != nullptr) 
+        {
+            BinaryNode *minNode = findMin(t->right);
+            std::swap(t->element, minNode->element);  
+            remove(*minNode->element, t->right);
+        } 
+        else 
+        {
+            BinaryNode *oldNode = t;
+            t = (t->left != nullptr) ? t->left : t->right;
+            delete oldNode;
+        }
 
     
-    if (t != nullptr) {
-        t->updateHeight();
-    }
+        if (t != nullptr) 
+        {
+            t->updateHeight();
+        }
 
-    balance(t);
+        balance(t);
     }
 
     

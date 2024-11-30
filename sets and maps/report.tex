@@ -1,0 +1,130 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage[UTF8]{ctex}
+\geometry{a4paper, margin=1in}
+
+\title{Sets 和 Maps 的介绍及示例}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Sets 的特点和用法}
+
+\subsection*{特点}
+\begin{itemize}
+    \item \texttt{set} 是一种有序容器，其中的元素按键值排序，并且不允许重复。
+    \item 常见操作包括插入、删除和查找，时间复杂度为 $O(\log n)$。
+    \item 提供迭代器 (\texttt{iterator, const\_iterator}) 用于遍历容器。
+\end{itemize}
+
+\subsection*{示例代码：基本使用}
+\begin{lstlisting}[language=C++, caption=Set 示例]
+#include <iostream>
+#include <set>
+using namespace std;
+
+int main() {
+    set<int> mySet;
+
+    // 插入元素
+    mySet.insert(10);
+    mySet.insert(20);
+    mySet.insert(10); // 重复元素被忽略
+
+    // 遍历元素
+    for (int val : mySet) {
+        cout << val << " "; // 输出: 10 20
+    }
+    cout << endl;
+
+    // 查找元素
+    if (mySet.find(20) != mySet.end()) {
+        cout << "20 存在于集合中" << endl;
+    }
+
+    // 删除元素
+    mySet.erase(10);
+    cout << "集合大小: " << mySet.size() << endl;
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsection*{自定义排序规则}
+通过比较函数自定义排序，例如降序：
+\begin{lstlisting}[language=C++, caption=Set 自定义排序]
+struct Compare {
+    bool operator()(int a, int b) const {
+        return a > b; // 降序
+    }
+};
+
+set<int, Compare> mySet = {10, 20, 5};
+for (int val : mySet) {
+    cout << val << " "; // 输出: 20 10 5
+}
+\end{lstlisting}
+
+\section*{2. Maps 的特点和用法}
+
+\subsection*{特点}
+\begin{itemize}
+    \item \texttt{map} 是一种有序的键值对容器，键（\texttt{key}）唯一，值（\texttt{value}）可以重复。
+    \item 支持键到值的高效查找，操作复杂度为 $O(\log n)$。
+    \item 提供类似数组的索引操作符 \texttt{[]}。
+\end{itemize}
+
+\subsection*{示例代码：基本使用}
+\begin{lstlisting}[language=C++, caption=Map 示例]
+#include <iostream>
+#include <map>
+using namespace std;
+
+int main() {
+    map<string, int> myMap;
+
+    // 插入键值对
+    myMap["Alice"] = 30;
+    myMap["Bob"] = 25;
+
+    // 遍历键值对
+    for (auto &entry : myMap) {
+        cout << entry.first << ": " << entry.second << endl;
+    }
+
+    // 查找键
+    if (myMap.find("Alice") != myMap.end()) {
+        cout << "Alice 存在于映射中" << endl;
+    }
+
+    // 删除键
+    myMap.erase("Bob");
+    cout << "Alice 的年龄: " << myMap["Alice"] << endl;
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsection*{自定义比较规则}
+\begin{lstlisting}[language=C++, caption=Map 自定义排序]
+struct Compare {
+    bool operator()(const string &a, const string &b) const {
+        return a > b; // 按键降序排列
+    }
+};
+
+map<string, int, Compare> myMap;
+myMap["Alice"] = 30;
+myMap["Bob"] = 25;
+for (auto &entry : myMap) {
+    cout << entry.first << ": " << entry.second << endl; // 输出: Bob, Alice
+}
+\end{lstlisting}
+
+\end{document}

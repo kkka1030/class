@@ -1,0 +1,67 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage[UTF8]{ctex}
+\geometry{a4paper, margin=1in}
+
+\title{第四章总结：树}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{总结}
+
+\subsection*{树的基本结构}
+\begin{itemize}
+    \item 树是一种递归定义的数据结构，用于表示具有层次关系的元素。
+    \item 二叉树是树的基本形式，每个节点最多有两个子节点。
+\end{itemize}
+
+\subsection*{二叉搜索树（BST）}
+\begin{itemize}
+    \item 左子树的所有节点值小于根节点，右子树的所有节点值大于根节点。
+    \item 常见操作：插入、删除、查找。
+    \item 平均时间复杂度为 $O(\log n)$，最坏情况为 $O(n)$。
+\end{itemize}
+
+\subsection*{平衡树}
+为避免 BST 退化成链表，提出了以下平衡树：
+\begin{itemize}
+    \item \textbf{AVL 树}：严格平衡的二叉搜索树，通过旋转操作保持平衡。
+    \item \textbf{Splay 树}：访问节点时进行旋转，将节点移到树根，优化后续访问。
+    \item \textbf{B 树}：适合外部存储的大型数据集管理。
+\end{itemize}
+
+\subsection*{树的遍历方式}
+\begin{itemize}
+    \item \textbf{前序遍历}：根节点 $\rightarrow$ 左子树 $\rightarrow$ 右子树。
+    \item \textbf{中序遍历}：左子树 $\rightarrow$ 根节点 $\rightarrow$ 右子树。
+    \item \textbf{后序遍历}：左子树 $\rightarrow$ 右子树 $\rightarrow$ 根节点。
+    \item \textbf{层序遍历}：按层次逐层访问节点。
+\end{itemize}
+
+\subsection*{集合和映射}
+\begin{itemize}
+    \item C++ 提供了 \texttt{set} 和 \texttt{map} 容器，分别用于存储集合和键值对。
+    \item 它们基于红黑树实现，操作复杂度为 $O(\log n)$。
+\end{itemize}
+
+\subsection*{应用场景}
+\begin{itemize}
+    \item 树广泛用于表达式解析、文件系统、数据库索引等领域。
+    \item 平衡树（如 AVL 树和 B 树）适用于需要高效查询的大型数据集。
+\end{itemize}
+
+\section*{学习重点}
+\begin{itemize}
+    \item 理解树的基本结构和性质。
+    \item 掌握二叉搜索树及平衡树的操作与应用场景。
+    \item 熟悉树的遍历算法及其实现。
+    \item 了解 \texttt{set} 和 \texttt{map} 容器的使用及其实现原理。
+\end{itemize}
+
+\end{document}
