@@ -1,0 +1,106 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry, CJKutf8}
+\geometry{margin=1.5cm, vmargin={0pt,1cm}}
+\setlength{\topmargin}{-1cm}
+\setlength{\paperheight}{29.7cm}
+\setlength{\textheight}{25.3cm}
+\usepackage{longtable}
+% useful packages.
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{layout}
+\usepackage{listings}
+\usepackage{float, caption}
+
+\lstset{
+    basicstyle=\ttfamily, basewidth=0.5em
+}
+
+% some common command
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\difFrac}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\pdfFrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\OFL}{\mathrm{OFL}}
+\newcommand{\UFL}{\mathrm{UFL}}
+\newcommand{\fl}{\mathrm{fl}}
+\newcommand{\op}{\odot}
+\newcommand{\Eabs}{E_{\mathrm{abs}}}
+\newcommand{\Erel}{E_{\mathrm{rel}}}
+
+\begin{document}
+
+\pagestyle{fancy}
+\fancyhead{}
+\lhead{邵奕涵, 3230103664}
+\chead{数据结构与算法作业}
+\rhead{Nov.30th, 2024}
+
+\section{设计思路}
+本项目旨在实现一个基于堆排序的算法，并与标准库提供的堆排序实现（\texttt{std::sort\_heap()}）进行性能对比。整个项目分为以下几部分：
+\begin{enumerate}
+    \item \textbf{堆排序实现：}在\texttt{HeapSort.h}文件中实现了一个模板类，利用堆的性质对向量进行原地排序。
+    \item \textbf{测试程序：}在\texttt{test.cpp}中编写了一个测试程序，生成不同类型的测试序列，分别应用自定义的堆排序和标准库排序，并记录时间与正确性。
+\end{enumerate}
+
+\section{关键函数及实现细节}
+堆排序的实现主要依赖以下几个关键函数：
+\begin{itemize}
+    \item \textbf{\texttt{buildHeap}:} 构建最大堆，从最后一个非叶子节点开始依次下滤。
+    \item \textbf{\texttt{percDown}:} 下滤操作，将节点与其子节点交换以维持堆的性质。
+    \item \textbf{\texttt{sort}:} 堆排序主函数，先构建最大堆，然后依次将堆顶元素与堆尾交换，最后对堆的有效部分重新下滤。
+\end{itemize}
+
+
+
+\section{测试流程}
+写了一个check函数检测排序的正确性。同时，测试程序生成以下四种长度为1,000,000的序列：
+\begin{itemize}
+    \item \textbf{随机序列：} 使用随机数生成器生成随机数。
+    \item \textbf{有序序列：} 依次递增的整数序列。
+    \item \textbf{逆序序列：} 依次递减的整数序列。
+    \item \textbf{部分重复序列：} 元素为有限个值的重复序列。
+\end{itemize}
+
+每种序列分别使用自定义堆排序和\texttt{std::sort\_heap}排序，记录排序时间并验证排序正确性。
+
+
+
+\section{测试结果}
+以下是四种序列的测试结果，包含两种排序的时间对比。
+
+\begin{longtable}{|l|c|c|c|}
+\hline
+\textbf{测试类型} & \textbf{HeapSort时间(ms)} & \textbf{std::sort\_heap时间(ms)} & \textbf{效率提升} \\ \hline
+随机序列        & 339                      & 506                              & 快了33.0\%        \\ \hline
+有序序列        & 249                      & 375                              & 快了33.6\%        \\ \hline
+逆序序列        & 235                      & 395                              & 快了40.5\%        \\ \hline
+部分重复序列    & 277                      & 422                              & 快了34.3\%        \\ \hline
+\end{longtable}
+
+\section{结论}
+通过测试可以得出：
+\begin{enumerate}
+    \item 自定义的堆排序在所有测试序列中均能正确排序，性能优于标准库的\texttt{std::sort\_heap()}。
+    \item 在逆序序列中，自定义堆排序的效率优势最为显著。
+    \item 在部分重复序列中，自定义堆排序的时间也具有明显的性能提升。
+    
+\end{enumerate}
+
+整体来看，自定义堆排序是一个高效、稳定的排序实现，适用于各种场景。
+\section{时间复杂度分析}
+
+\begin{enumerate}
+    \item 构建最大堆的时间复杂度为O(N).
+    \item 下滤操作的时间复杂度为O(logN).
+    \item 于是堆排序的时间复杂度为O(N+NlogN)=O(NlogN)
+    
+\end{enumerate}
+\end{document}
+
