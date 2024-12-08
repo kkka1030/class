@@ -1,0 +1,173 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry, CJKutf8}
+\geometry{margin=1.5cm, vmargin={0pt,1cm}}
+\setlength{\topmargin}{-1cm}
+\setlength{\paperheight}{29.7cm}
+\setlength{\textheight}{25.3cm}
+\usepackage{longtable}
+% useful packages.
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{layout}
+\usepackage{listings}
+\usepackage{float, caption}
+
+\lstset{
+    basicstyle=\ttfamily, basewidth=0.5em
+}
+
+% some common command
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\difFrac}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\pdfFrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\OFL}{\mathrm{OFL}}
+\newcommand{\UFL}{\mathrm{UFL}}
+\newcommand{\fl}{\mathrm{fl}}
+\newcommand{\op}{\odot}
+\newcommand{\Eabs}{E_{\mathrm{abs}}}
+\newcommand{\Erel}{E_{\mathrm{rel}}}
+
+\begin{document}
+\pagestyle{fancy}
+\fancyhead{}
+\lhead{邵奕涵, 3230103664}
+\chead{数据结构与算法作业}
+\rhead{Dec.30th, 2024}
+
+
+\section{项目背景与目标}
+
+本项目旨在设计并实现一个程序，用于计算包含加法、减法、乘法、除法和括号的中缀表达式。用户可以输入一个合法的数学表达式，程序会输出计算结果。如果输入的表达式不合法，程序将输出"ILLEGAL"并给出错误提示。
+
+\section{项目要求}
+
+项目需要满足以下要求：
+\begin{itemize}
+    \item 支持加法、减法、乘法、除法运算。
+    \item 支持多重括号及运算符优先级。
+    \item 支持有限位小数的运算。
+    \item 支持负数的运算。
+    \item 识别非法表达式，如括号不匹配、运算符连续使用、除数为零等。
+    \item 输出非法表达式的错误信息，提示具体的错误类型。
+\end{itemize}
+
+\section{设计与实现}
+
+本程序使用C++语言实现。下面详细介绍了各个功能模块的实现过程。
+
+\subsection{前置声明与使用的库}
+
+程序使用了以下C++标准库来实现核心功能：
+\begin{itemize}
+    \item \texttt{#include <iostream>}：用于输入输出操作。
+    \item \texttt{#include <stack>}：用于栈的数据结构，实现操作符和操作数的存储与处理。
+    \item \texttt{#include <sstream>}：用于字符串流的操作，主要用于解析数字。
+    \item \texttt{#include <cctype>}：用于字符处理，如检查字符是否为数字等。
+\end{itemize}
+
+\subsection{运算符优先级的定义}
+
+程序中定义了一个函数 \texttt{precedence(char op)} 来返回操作符的优先级。优先级如下：
+\begin{itemize}
+    \item 加法 (+) 和减法 (-) 的优先级为 1。
+    \item 乘法 (*) 和除法 (/) 的优先级为 2。
+    \item 左括号的优先级为 0。
+\end{itemize}
+该函数在比较当前操作符与栈中的操作符时用于决定是否需要将栈中的操作符先应用于操作数。
+
+\subsection{执行运算的函数}
+
+程序通过 \texttt{applyOp(int a, int b, char op)} 函数来执行加、减、乘、除操作。该函数根据给定的操作符执行相应的运算。例如：
+\begin{itemize}
+    \item 如果操作符是 "+"，则执行加法：\texttt{a + b}。
+    \item 如果操作符是 "-"，则执行减法：\texttt{a - b}。
+    \item 如果操作符是 "*"，则执行乘法：\texttt{a * b}。
+    \item 如果操作符是 "/"，则执行除法，并且当除数为 0 时抛出异常。
+\end{itemize}
+如果遇到除数为 0 的情况，程序会抛出异常，指示该操作无法执行。
+
+\subsection{表达式求值的核心逻辑}
+
+\texttt{evaluate(const string \&expression)} 函数是程序的核心。该函数接受一个字符串类型的表达式，遍历其中的每个字符并按照中缀表达式的规则进行计算。具体步骤如下：
+
+\begin{itemize}
+    \item \textbf{空格处理：} 如果当前字符是空格，程序会跳过它继续处理下一个字符。
+    \item \textbf{数字处理：} 如果当前字符是数字，程序会继续读取字符直到构成一个完整的数字（包括整数和小数）。解析完成后，将数字压入 \texttt{values} 栈中。
+    \item \textbf{左括号处理：} 如果遇到左括号 \texttt{(}，程序将其压入 \texttt{ops} 栈中，表示接下来需要计算的子表达式。
+    \item \textbf{右括号处理：} 如果遇到右括号 \texttt{)}，程序会将栈中的操作符依次应用于操作数，直到遇到左括号为止。如果栈中没有匹配的左括号，程序会抛出异常。
+    \item \textbf{操作符处理：} 如果遇到加法、减法、乘法、除法等操作符，程序会根据操作符的优先级决定是否先处理栈中的操作符。首先将栈中优先级较高的操作符应用于操作数，然后将当前操作符压入栈中。
+    \item \textbf{非法字符检查：} 如果遇到非法字符（即不属于数字、空格、括号或四则运算符），程序会抛出异常。
+    
+\end{itemize}
+
+\subsection{解析剩余的操作符}
+
+在遍历完表达式后，可能栈中还存在未处理的操作符。这些操作符会按照优先级依次应用于操作数，直到栈为空。
+
+\subsection{错误处理}
+
+在程序运行过程中，如果栈中剩余的元素个数不为 1，表示表达式不合法，程序会抛出异常并输出"ILLEGAL+具体错误原因"。通过使用 \texttt{try-catch} 机制，程序能够捕获异常并正确处理非法表达式。
+
+\subsection{主函数 (main)}
+主函数首先测试了一些测试用例，再从用户输入读取一个表达式，然后调用 \texttt{evaluate} 函数计算结果。如果输入表达式合法，程序会输出计算结果；如果表达式不合法，程序会捕获异常并输出 \texttt{"ILLEGAL"}。
+
+
+\section{测试用例与结果}
+
+为了验证程序的正确性，我们设计了一系列测试用例。测试结果如下：
+
+\subsection{合法表达式}
+
+\begin{itemize}
+    \item 输入：$1 + 2 * 3$，输出：7
+    \item 输入：$(1 + 2) * 3$，输出：9
+    \item 输入：$3 + (4 * 5)$，输出：23
+    \item 输入：$(10 - 3) / (2 + 1)$，输出：2.33333
+    \item 输入：$1 + -2.1$，输出：-1.1
+    \item 输入：$3.5 + 2.1$，输出：5.6
+    \item 输入：$4 * -1.5$，输出：-1.5
+    \item 输入：$10 / 2.5$，输出：4
+    \item 输入：$1 + -2.1 * 2$，输出：-3.2
+\end{itemize}
+
+\subsection{非法表达式}
+
+\begin{itemize}
+    \item 输入：$1 ++ 2$，输出：\texttt{ILLEGAL: 操作数不足}
+    \item 输入：$1 + 2 *$，输出：\texttt{ILLEGAL: 操作数不足}
+    \item 输入：$+ 1 + 2$，输出：\texttt{ILLEGAL: 操作数不足}
+    \item 输入：$(1 + 2$，输出：\texttt{ILLEGAL: 操作数不足}
+    \item 输入：$10 / 0$，输出：\texttt{ILLEGAL: 除数不能为0}
+    \item 输入：$1.2 + 3.4.5$，输出：\texttt{ILLEGAL: 小数格式错误}
+    \item 输入：$10 / 0.0$，输出：\texttt{ILLEGAL: 除数不能为0}
+    \item 输入：$2 * (3 / 0)$，输出：\texttt{ILLEGAL: 除数不能为0}
+\end{itemize}
+
+\section{负数处理}
+
+代码中，我们加入了对负数的处理。
+
+\subsection{负号的判断}
+
+我们定义了一个函数 \texttt{isminus} 来判断当前字符是否表示负数。具体来说，负号 `-` 如果出现在表达式的起始位置，或者前一个字符是运算符（如加号 `+`、减号 `-`、乘号 `*`、除号 `/`）或左括号 `(`，则该负号表示一个负数符号，而非减法操作符。
+
+
+\subsection{处理}
+
+当我们识别出负号时，压入一个零值，然后将负号当作减法运算符继续运算。
+
+
+
+
+\section{总结}
+
+通过本项目的实现，我们成功地设计了一个四则运算表达式求值程序。程序不仅能够处理基本的四则运算和多重括号，还能够识别并处理非法表达式，确保计算结果的准确性和程序的健壮性，以及还能处理负数。
+
+\end{document}

@@ -12,10 +12,11 @@ int precedence(char op)
         return 1;
     if (op == '*' || op == '/')
         return 2;
+    return 0;
     
 }
 
-int applyop(double a,double b,char op)
+double applyop(double a,double b,char op)
 {
     if (op == '+')
     {
@@ -31,14 +32,34 @@ int applyop(double a,double b,char op)
     }
     if (op == '/')
     {
-        if (b == 0) throw runtime_error("Mismatched parentheses");
+        if (b == 0) throw runtime_error("除数不能为0");
         return a/b;
     }
+    return 0;
 }
-int evaluate(const string &expression)
+
+bool isminus(int i,const string &expression)
+{
+    if (i==0)
+    {
+        return true;
+    }
+    while (i >= 1 && isspace(expression[i-1]))
+        {
+            --i;
+        }
+    if (i ==0 || expression[i-1] == '+' || expression[i-1] == '-' || expression[i-1] == '*' || expression[i-1] == '/'|| expression[i-1] == '(')
+    {
+        return true;
+    }
+    return false; 
+}
+
+double evaluate(const string &expression)
 {
     stack<double> values;
-    stack<int> ops;
+    stack<char> ops;
+    int count =0;
     for (int i = 0; i < expression.length();i++)
     {
         if (isspace(expression[i]))
@@ -48,15 +69,20 @@ int evaluate(const string &expression)
         if (isdigit(expression[i]))
         {
             int j = i;
-            while (i < expression.length() && (isdigit(expression[i+1]) || expression[i+1] == '.'))
+            count = 0;
+            while (i < expression.length()-1 && (isdigit(expression[i+1]) || expression[i+1] == '.'))
             {
+                if (expression[i+1] == '.')
+                {
+                    ++count;
+                }
                 i++;
             }
-            if (expression[i] == '.') 
+            if (expression[i] == '.' || count >=2) 
             {
-                throw runtime_error("Invalid number format"); 
+                throw runtime_error("小数格式错误"); 
             }
-            int value = stod(expression.substr(j,i-j+1));
+            double value = stod(expression.substr(j,i-j+1));
             values.push(value);
         }
         else if (expression[i] == '(')
@@ -67,10 +93,10 @@ int evaluate(const string &expression)
         {
             while (!ops.empty() && ops.top() != '(')
             {
-                if (values.empty()) throw runtime_error("erro");
+                if (values.empty()) throw runtime_error("操作数不足");
                 double val2 = values.top();
                 values.pop();
-                if (values.empty()) throw runtime_error("erro");
+                if (values.empty()) throw runtime_error("操作数不足");
                 double val1 = values.top();
                 values.pop();
                 values.push(applyop(val1,val2,ops.top()));
@@ -81,21 +107,45 @@ int evaluate(const string &expression)
         }
         else if (expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/')
         {
-            if (precedence(expression[i])>precedence(ops.top()))
+            if (expression[i] == '-' && isminus(i,expression))
             {
-                if (values.empty()) throw runtime_error("erro");
+                values.push(0);
+            }
+            while (!ops.empty() && precedence(expression[i]) <= precedence(ops.top()))
+            {
+                if (values.empty()) throw runtime_error("操作数不足");
                 double val2 = values.top();
                 values.pop();
-                if (values.empty()) throw runtime_error("erro");
+                if (values.empty()) throw runtime_error("操作数不足");
                 double val1 = values.top();
-                values.push(applyop(val1,val2,expression[i]));
+                values.pop();
+                char op = ops.top();
+                ops.pop();
+                values.push(applyop(val1,val2,op));
             }
-            else
-            {
-                ops.push(expression[i]);                
-            }
-
+            ops.push(expression[i]);
+        }
+        else 
+        {
+            throw runtime_error("非法字符");
         }
 
     }
+    while (!ops.empty()) {
+        if (values.empty()) throw runtime_error("操作数不足");
+        double val2 = values.top();
+        values.pop();
+
+        if (values.empty()) throw runtime_error("操作数不足");
+        double val1 = values.top();
+        values.pop();
+
+        char op = ops.top();
+        ops.pop();
+
+        values.push(applyop(val1, val2, op));
+    }
+    if (values.size() != 1) throw runtime_error("表达式错误");
+    return values.top();
+
 }
